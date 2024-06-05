@@ -1,14 +1,46 @@
-from fastapi import FastAPI, Depends
-from sqlalchemy.future import select
+from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from .database import get_database
-from .models import User
+from .schemas import User, UserEdit
+from .repositories import UserRepository
 
 app = FastAPI()
 
 
-@app.get("/users/")
-async def read_users(db: AsyncSession = Depends(get_database)):
-    result = await db.execute(select(User))
-    return result.scalars().all()
+@app.get("/users/", response_model=list[User])
+async def read_users(db_session: AsyncSession = Depends(get_database)):
+    return await UserRepository(db_session).get_all()
+
+@app.get("/users/{id}", response_model=User)
+async def read_user(id: int, db_session=Depends(get_database)):
+    user = await UserRepository(db_session).get_by_id(id)
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
+
+
+@app.post("/users/", response_model=User)
+async def create_user(user: UserEdit, db_session: AsyncSession = Depends(get_database)):
+    return await UserRepository(db_session).create(user)
+
+
+@app.put("/users/{id}", response_model=User)
+async def update_user(id: int, user: UserEdit, db_session: AsyncSession = Depends(get_database)):
+    repo = UserRepository(db_session)
+    user_from_db = await repo.get_by_id(id)
+    if user_from_db is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return await repo.update(user_from_db, user)
+
+
+@app.delete("/users/{id}")
+async def delete_user(id: int, db_session: AsyncSession = Depends(get_database)):
+    repo = UserRepository(db_session)
+    user = await repo.get_by_id(id)
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    await repo.delete(user)
+    return {
+        "detail": "User deleted"
+    }
