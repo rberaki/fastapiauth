@@ -1,16 +1,31 @@
 from pydantic import BaseModel, EmailStr
 
 
-class UserBase(BaseModel):
-    firstname: str
-    lastname: str
-    email_address: EmailStr
+class UsernameMixin(BaseModel):
     username: str
 
 
-class UserEdit(UserBase):
+class UserPasswordMixin(BaseModel):
     password: str
 
 
-class User(UserBase):
+class UserBaseMixin(UsernameMixin):
+    firstname: str
+    lastname: str
+    email_address: EmailStr
+
+
+class UserLogin(UsernameMixin, UserPasswordMixin):
+    pass
+
+
+class UserCreate(UserBaseMixin, UserPasswordMixin):
+    pass
+
+
+class UserUpdate(UserBaseMixin):
+    password: str = None
+
+
+class User(UserBaseMixin):
     id: int
