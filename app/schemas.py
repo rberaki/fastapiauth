@@ -29,3 +29,8 @@ class UserUpdate(UserBaseMixin):
 
 class User(UserBaseMixin):
     id: int
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str

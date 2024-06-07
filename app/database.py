@@ -1,9 +1,8 @@
-from decouple import config
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 from .models import Base
+from . import DB_URL
 
-DB_URL = config('DATABASE_URL')
 
 engine = create_async_engine(DB_URL, echo=True)
 SessionLocal = async_sessionmaker(
