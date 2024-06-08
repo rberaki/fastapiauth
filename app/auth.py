@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timezone, timedelta
 from jose import jwt, JWTError
 
 from .crypt import crypt_context
@@ -15,7 +15,7 @@ def get_password_hash(password: str):
 
 def create_access_token(data: dict, expires_delta: timedelta):
     to_encode = data.copy()
-    expire_datetime = datetime.now(datetime.UTC) + expires_delta
+    expire_datetime = datetime.now(timezone.utc) + expires_delta
     to_encode.update({"exp": expire_datetime, "iss": ISSUER, "aud": AUDIENCE})
     encode_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encode_jwt
@@ -23,7 +23,7 @@ def create_access_token(data: dict, expires_delta: timedelta):
 
 def decode_access_token(token: str):
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM], audience=AUDIENCE, issuer=ISSUER)
         return payload
     except JWTError:
         return None

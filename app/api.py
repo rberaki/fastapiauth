@@ -13,7 +13,7 @@ from . import TOKEN_EXPIRE_MINUTES
 app = FastAPI()
 
 
-async def get_current_user(token: str = Depends(OAuth2PasswordBearer(tokenUrl="token")), db_session: AsyncSession = Depends(get_database)):
+async def get_current_user(token: str = Depends(OAuth2PasswordBearer(tokenUrl="token", scheme_name="JWT")), db_session: AsyncSession = Depends(get_database)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -48,12 +48,12 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
 
 
 @app.get("/users/", response_model=list[User], tags=["Users"])
-async def read_users(db_session: AsyncSession = Depends(get_database)):
+async def read_users(current_user: User = Depends(get_current_user), db_session: AsyncSession = Depends(get_database)):
     return await UserRepository(db_session).get_all()
 
 
 @app.get("/users/{id}", response_model=User, tags=["Users"])
-async def read_user(id: int, db_session=Depends(get_database)):
+async def read_user(id: int, current_user: User = Depends(get_current_user), db_session=Depends(get_database)):
     user = await UserRepository(db_session).get_by_id(id)
     if user is None:
         raise HTTPException(
@@ -67,7 +67,7 @@ async def create_user(user: UserCreate, db_session: AsyncSession = Depends(get_d
 
 
 @app.put("/users/{id}", response_model=User, tags=["Users"])
-async def update_user(id: int, user: UserUpdate, db_session: AsyncSession = Depends(get_database)):
+async def update_user(id: int, user: UserUpdate, current_user: User = Depends(get_current_user), db_session: AsyncSession = Depends(get_database)):
     repo = UserRepository(db_session)
     user_from_db = await repo.get_by_id(id)
     if user_from_db is None:
@@ -77,7 +77,7 @@ async def update_user(id: int, user: UserUpdate, db_session: AsyncSession = Depe
 
 
 @app.delete("/users/{id}", tags=["Users"])
-async def delete_user(id: int, db_session: AsyncSession = Depends(get_database)):
+async def delete_user(id: int, current_user: User = Depends(get_current_user), db_session: AsyncSession = Depends(get_database)):
     repo = UserRepository(db_session)
     user = await repo.get_by_id(id)
     if user is None:
