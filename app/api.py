@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Depends, HTTPException, status
-from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from sqlalchemy.ext.asyncio import AsyncSession
 from datetime import timedelta
 from jose import JWTError
 
@@ -45,6 +45,11 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     access_token = create_access_token(
         data={"sub": user.username}, expires_delta=expire_mins)
     return {"access_token": access_token, "token_type": "bearer"}
+
+
+@app.get("/users/me", response_model=User, tags=["Users"])
+async def read_self(current_user: User = Depends(get_current_user)):
+    return current_user
 
 
 @app.get("/users/", response_model=list[User], tags=["Users"])
