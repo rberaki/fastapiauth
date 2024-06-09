@@ -2,7 +2,7 @@ from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 from datetime import timedelta
-from jose import JWTError
+from jose import JWTError, ExpiredSignatureError
 
 from .database import get_database
 from .schemas import User, UserCreate, UserUpdate, Token
@@ -24,6 +24,12 @@ async def get_current_user(token: str = Depends(OAuth2PasswordBearer(tokenUrl="t
         username: str = payload.get("sub")
         if username is None:
             raise credentials_exception
+    except ExpiredSignatureError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token has expired",
+            headers={"WWW-Authenticate": "Bearer"}
+        )
     except JWTError:
         raise credentials_exception
     user = await UserRepository(db_session).get_by_username(username)

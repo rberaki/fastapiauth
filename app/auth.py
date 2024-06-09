@@ -1,5 +1,5 @@
 from datetime import datetime, timezone, timedelta
-from jose import jwt, JWTError
+from jose import jwt
 
 from .crypt import crypt_context
 from . import SECRET_KEY, ALGORITHM, ISSUER, AUDIENCE
@@ -22,8 +22,6 @@ def create_access_token(data: dict, expires_delta: timedelta):
 
 
 def decode_access_token(token: str):
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM], audience=AUDIENCE, issuer=ISSUER)
-        return payload
-    except JWTError:
-        return None
+    payload = jwt.decode(token, SECRET_KEY, algorithms=[
+                         ALGORITHM], audience=AUDIENCE, issuer=ISSUER)
+    return payload
