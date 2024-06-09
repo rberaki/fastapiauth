@@ -1,5 +1,6 @@
+import jwt
+
 from datetime import datetime, timezone, timedelta
-from jose import jwt
 
 from .crypt import crypt_context
 from . import SECRET_KEY, ALGORITHM, ISSUER, AUDIENCE
