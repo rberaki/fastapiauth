@@ -1,14 +1,14 @@
 # FastAPI CRUD Application with JWT Auth
 
-This project demonstrates the creation of a CRUD application using FastAPI wiht JWT-based authentication. It's built with Python using FastAPI and Async SQLAlchemy, with SQLite database. The application is containerized using Docker.
+This project demonstrates creating a CRUD application using FastAPI with JWT-based authentication. It's built with Python using FastAPI, Async SQLAlchemy, and SQLite database. The application is containerized using Docker.
 
 ## Features
 - JWT-based authentication
 - CRUD operations for users
 - Password hashing with bcrypt
 - Token expiration handling
-- Asyc SQLAlchemy for database operations
-- SQLite as database
+- Async SQLAlchemy for database operations
+- SQLite as the database
 - Containerized with Docker
 - Easy-to-use Swagger UI for API documentation and testing
 
@@ -43,7 +43,7 @@ pip install -r requirements.txt
 ```bash
 python main.py
 ```
-5. Access the Swagger UI:
+5. Access the Swagger UI: 
 Open your browser and navigate to `http://localhost:8080/docs` to access the Swagger UI for the API.
 
 ![Swagger UI](endpoints.JPG)
