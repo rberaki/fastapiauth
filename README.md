@@ -47,3 +47,15 @@ python main.py
 Open your browser and navigate to `http://localhost:8080/docs` to access the Swagger UI for the API.
 
 ![Swagger UI](endpoints.JPG)
+
+## Docker Setup
+1. Build the Docker image:
+```bash
+docker build -t my-fastapi-app .
+```
+2. Run the Docker container:
+```bash
+docker run -d --name my-fastapi-container -p 8080:8080 my-fastapi-app
+```
+3. Access the Swagger UI:
+Open your browser and navigate to `http://localhost:8080/docs` to access the Swagger UI for the API.
