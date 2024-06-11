@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
 from .models import User
-from .schemas import UserCreate, UserUpdate
+from .schemas import UserCreate, UserUpdate, UserLogin
 from .auth import get_password_hash, verify_password
 
 
@@ -48,8 +48,8 @@ class UserRepository:
         await self.db_session.delete(user)
         await self.db_session.commit()
 
-    async def authenticate(self, username: str, password: str):
-        usr_from_db = await self.get_by_username(username)
-        if usr_from_db and verify_password(password, usr_from_db.password):
+    async def authenticate(self, user: UserLogin):
+        usr_from_db = await self.get_by_username(user.username)
+        if usr_from_db and verify_password(user.password, usr_from_db.password):
             return usr_from_db
         return None
