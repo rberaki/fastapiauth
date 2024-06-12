@@ -5,7 +5,7 @@ class Username(BaseModel):
     username: str
 
 
-class UserBase(Username, BaseModel):
+class UserBase(Username):
     firstname: str
     lastname: str
     email_address: EmailStr
@@ -23,7 +23,7 @@ class User(UserBase):
     id: int
 
 
-class UserLogin(Username, BaseModel):
+class UserLogin(Username):
     password: str
 
 
